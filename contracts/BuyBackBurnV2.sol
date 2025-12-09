@@ -17,6 +17,7 @@ contract BuyBackBurnV2 is Ownable, ReentrancyGuard, Pausable {
     uint256 public totalBurnedAmount;
     uint256 public buyBackFeePercentage;
     uint256 private constant BASIS_POINTS = 10000;
+    address private constant BURN_ADDRESS = 0x000000000000000000000000000000000000dEaD;
     
     address public treasuryWallet;
     uint256 public minBuyBackAmount;
@@ -86,7 +87,11 @@ contract BuyBackBurnV2 is Ownable, ReentrancyGuard, Pausable {
             require(feeSent, "Fee transfer failed");
         }
         
-        // In a real implementation, this would interact with a DEX
+        // TODO: Production Implementation
+        // In a production environment, integrate with DEX routers (e.g., Uniswap V2/V3, SushiSwap)
+        // to perform actual token buybacks from the market. Example:
+        // IUniswapV2Router02 router = IUniswapV2Router02(ROUTER_ADDRESS);
+        // router.swapExactETHForTokens{value: buyBackAmount}(...)
         // For this version, we simulate the buyback by assuming tokens are received
         uint256 tokensBought = expectedTokenAmount;
         
@@ -116,7 +121,9 @@ contract BuyBackBurnV2 is Ownable, ReentrancyGuard, Pausable {
         require(contractBalance >= amount, "Insufficient token balance");
         
         // Burn tokens by sending to dead address
-        require(token.transfer(address(0xdead), amount), "Burn transfer failed");
+        // This is a commonly accepted burn address that works with most ERC20 implementations
+        // as many tokens explicitly prevent transfers to address(0)
+        require(token.transfer(BURN_ADDRESS, amount), "Burn transfer failed");
         
         totalBurnedAmount += amount;
         emit TokensBurned(amount);

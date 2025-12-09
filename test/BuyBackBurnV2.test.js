@@ -243,20 +243,26 @@ describe("BuyBackBurnV2", function () {
   describe("Emergency Withdraw", function () {
     it("Should allow owner to emergency withdraw ETH", async function () {
       // Send some ETH to the contract
+      const sendAmount = ethers.parseEther("1");
       await owner.sendTransaction({
         to: await buyBackBurn.getAddress(),
-        value: ethers.parseEther("1")
+        value: sendAmount
       });
       
       const ownerBalanceBefore = await ethers.provider.getBalance(owner.address);
       
       const tx = await buyBackBurn.emergencyWithdrawETH();
       const receipt = await tx.wait();
-      const gasCost = receipt.gasUsed * receipt.gasPrice;
+      // Use effectiveGasPrice for EIP-1559 compatibility, fallback to gasPrice for legacy
+      const gasCost = receipt.gasUsed * (receipt.effectiveGasPrice || receipt.gasPrice);
       
       const ownerBalanceAfter = await ethers.provider.getBalance(owner.address);
       
-      expect(ownerBalanceAfter).to.be.gt(ownerBalanceBefore - gasCost);
+      // Owner should have received close to 1 ETH minus gas costs
+      expect(ownerBalanceAfter).to.be.closeTo(
+        ownerBalanceBefore + sendAmount - gasCost,
+        ethers.parseEther("0.01") // Allow small variance
+      );
     });
     
     it("Should allow owner to emergency withdraw tokens", async function () {
