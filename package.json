@@ -1,0 +1,28 @@
+{
+  "name": "buybackburn-v2",
+  "version": "2.0.0",
+  "description": "BuyBackBurn V2 - Smart contract for token buyback and burn mechanism",
+  "main": "index.js",
+  "scripts": {
+    "test": "hardhat test",
+    "compile": "hardhat compile",
+    "deploy": "hardhat run scripts/deploy.js",
+    "coverage": "hardhat coverage"
+  },
+  "keywords": [
+    "blockchain",
+    "ethereum",
+    "buyback",
+    "burn",
+    "defi"
+  ],
+  "author": "Kevin Yunai",
+  "license": "MIT",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "hardhat": "^2.19.0"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.0"
+  }
+}
